@@ -9,14 +9,17 @@ const testUser: User = {
 }
 
 let user: User
-describe('Users Model', () => {
+describe('Testing users Model', () => {
   it('should have a create method', () => {
     expect(userModel.create).toBeDefined()
   })
   it('create method should return the user object once created', async () => {
     user = await userModel.create(testUser)
-    const { id, ...userData } = user
-    expect({ ...userData }).toEqual({ ...testUser })
+    expect({
+      first_name: user.first_name,
+      last_name: user.last_name,
+      password: user.password,
+    }).toEqual({ ...testUser })
   })
   it('should have an index method', () => {
     expect(userModel.index).toBeDefined()
@@ -30,8 +33,11 @@ describe('Users Model', () => {
   })
   it('show method should return a user if the given id exist', async () => {
     const existingUser = await userModel.show(Number(user.id))
-    const { id, ...userData } = existingUser
-    expect({ ...userData }).toEqual({ ...testUser })
+    expect({
+      first_name: existingUser.first_name,
+      last_name: existingUser.last_name,
+      password: existingUser.password,
+    }).toEqual({ ...testUser })
   })
   it("show method should throw an error if the given id doesn't exist", async () => {
     const existingUser = await userModel.show(5)
@@ -45,8 +51,11 @@ describe('Users Model', () => {
       testUser.first_name,
       testUser.last_name
     )
-    const { id, ...userData } = existingUser
-    expect({ ...userData }).toEqual({ ...testUser })
+    expect({
+      first_name: existingUser.first_name,
+      last_name: existingUser.last_name,
+      password: existingUser.password,
+    }).toEqual({ ...testUser })
   })
   it("show method should throw an error if the given full name doesn't exist", async () => {
     const existingUser = await userModel.getUserByFullName('john', 'doe')

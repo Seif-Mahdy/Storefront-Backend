@@ -1,10 +1,10 @@
 import supertest from 'supertest'
-import app from '../../../server'
-import { User } from '../../../models/users'
+import app from '../../server'
+import { User } from '../../models/users'
 
 const request = supertest(app)
 
-fdescribe('Testing user endpoint: /users', () => {
+describe('Testing user endpoint: /users', () => {
   const dummyUser: User = {
     first_name: 'john',
     last_name: 'doe',
