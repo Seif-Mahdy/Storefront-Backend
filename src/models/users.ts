@@ -1,9 +1,9 @@
 import client from '../database'
 
 export type User = {
-  id: number
-  firstName: string
-  lastName: string
+  id?: number
+  first_name: string
+  last_name: string
   password: string
 }
 
@@ -47,19 +47,15 @@ export class UsersModel {
       )
     }
   }
-  async create(
-    firstName: string,
-    lastName: string,
-    password: string
-  ): Promise<User> {
+  async create(user: User): Promise<User> {
     try {
       const connection = await client.connect()
       const sql =
         'INSERT INTO users (first_name, last_name, password) VALUES($1,$2,$3) RETURNING *'
       const result = await connection.query(sql, [
-        firstName,
-        lastName,
-        password,
+        user.first_name,
+        user.last_name,
+        user.password,
       ])
       connection.release()
       return result.rows[0]

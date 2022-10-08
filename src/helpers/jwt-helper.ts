@@ -3,10 +3,15 @@ import { verify, sign } from 'jsonwebtoken'
 
 const secretToken = process.env.TOKEN_SECRET as string
 
-function Verify(req: Request) {
+function Verify(req: Request): boolean {
   const authorizationHeader = req.headers.authorization
   const token = authorizationHeader?.split(' ')[1]
-  verify(token as string, secretToken)
+  try {
+    verify(token as string, secretToken)
+    return true
+  } catch {
+    return false
+  }
 }
 
 function Sign(userId: number) {

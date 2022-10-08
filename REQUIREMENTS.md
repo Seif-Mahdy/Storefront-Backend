@@ -22,16 +22,16 @@ These are the notes from a meeting with the frontend developer that describe wha
 
 ## Data Shapes
 #### Product
--  id
-- name
+-  id SERIAL PRIMARY KEY
+- name VARCHAR(255)
 - price
 - [OPTIONAL] category
 
 #### User
-- id
-- firstName
-- lastName
-- password
+- id SERIAL PRIMARY KEY
+- firstName VARCHAR(50)
+- lastName VARCHAR(50)
+- password VARCHAR
 
 #### Orders
 - id
