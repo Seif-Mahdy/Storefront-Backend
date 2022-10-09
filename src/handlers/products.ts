@@ -46,6 +46,24 @@ const create = async (req: Request, res: Response) => {
   }
 }
 
+const index = async (req: Request, res: Response) => {
+  try {
+    if (Verify(req)) {
+      const errors = validationResult(req)
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() })
+      }
+
+      const productList = await products.index()
+      res.status(200).json({ products: productList })
+    } else {
+      return res.status(403).json({ err: 'Token is invalid or expired' })
+    }
+  } catch (err) {
+    res.status(500).json({ err })
+  }
+}
+
 //routes
 const productsRoutes = (app: express.Application) => {
   app.post(
@@ -55,6 +73,7 @@ const productsRoutes = (app: express.Application) => {
     create
   ),
     app.get('/products/:id', param('id').isNumeric(), show)
+  app.get('/products', index)
 }
 
 export default productsRoutes

@@ -6,6 +6,19 @@ export type Product = {
   price: number
 }
 export class ProductsModel {
+  async index(): Promise<Product[]> {
+    try {
+      const connection = await client.connect()
+      const sql = 'SELECT * FROM products'
+      const result = await connection.query(sql)
+      connection.release()
+      return result.rows
+    } catch (error) {
+      throw new Error(
+        `Failed to get the products with the following error: ${error}`
+      )
+    }
+  }
   async show(id: number): Promise<Product> {
     try {
       const connection = await client.connect()
