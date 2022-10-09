@@ -45,7 +45,6 @@ const create = async (req: Request, res: Response) => {
     res.status(500).json({ err })
   }
 }
-
 const index = async (req: Request, res: Response) => {
   try {
     if (Verify(req)) {

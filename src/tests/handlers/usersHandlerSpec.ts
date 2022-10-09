@@ -8,6 +8,7 @@ describe('Testing user endpoint: /users', () => {
   const dummyUser: User = {
     first_name: 'john',
     last_name: 'doe',
+    username: 'johndoe',
     password: 'Strong@2892022',
   }
   let token: string
@@ -27,7 +28,7 @@ describe('Testing user endpoint: /users', () => {
   it('Login endpoint should return a token if the passed creds are valid', async () => {
     await request
       .post('/users/login')
-      .send(dummyUser)
+      .send({ username: dummyUser.username, password: dummyUser.password })
       .expect(200)
       .then((res) => {
         const data = JSON.parse(res.text)
@@ -38,6 +39,7 @@ describe('Testing user endpoint: /users', () => {
     const userWithWrongCreds: User = {
       first_name: 'test',
       last_name: 'test',
+      username: 'test',
       password: 'test',
     }
     await request.post('/users/login').send(userWithWrongCreds).expect(403)
@@ -69,30 +71,6 @@ describe('Testing user endpoint: /users', () => {
   it('Read endpoint should return 403 given an invalid token', async () => {
     await request
       .get('/users/10')
-      .set('Authorization', `Bearer invalid-token`)
-      .expect(403)
-  })
-  it('Create endpoint should return 201 and create a user given a valid token', async () => {
-    const user: User = {
-      first_name: 'test',
-      last_name: 'test',
-      password: 'Strong@2892022',
-    }
-    await request
-      .post('/users')
-      .send(user)
-      .set('Authorization', `Bearer ${token}`)
-      .expect(201)
-  })
-  it('Create endpoint should return 403 given an invalid token', async () => {
-    const user: User = {
-      first_name: 'test',
-      last_name: 'test',
-      password: 'test',
-    }
-    await request
-      .post('/users')
-      .send(user)
       .set('Authorization', `Bearer invalid-token`)
       .expect(403)
   })

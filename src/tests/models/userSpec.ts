@@ -5,6 +5,7 @@ const userModel = new UsersModel()
 const testUser: User = {
   first_name: 'seif',
   last_name: 'alaa',
+  username: 'sifo',
   password: '123456',
 }
 
@@ -18,6 +19,7 @@ describe('Testing users Model', () => {
     expect({
       first_name: user.first_name,
       last_name: user.last_name,
+      username: user.username,
       password: user.password,
     }).toEqual({ ...testUser })
   })
@@ -36,6 +38,7 @@ describe('Testing users Model', () => {
     expect({
       first_name: existingUser.first_name,
       last_name: existingUser.last_name,
+      username: existingUser.username,
       password: existingUser.password,
     }).toEqual({ ...testUser })
   })
@@ -44,21 +47,19 @@ describe('Testing users Model', () => {
     expect(existingUser).toThrowError
   })
   it('should have a getUserByFullName method', () => {
-    expect(userModel.getUserByFullName).toBeDefined()
+    expect(userModel.getUserByUsername).toBeDefined()
   })
   it('show method should return a user if the given full name exists', async () => {
-    const existingUser = await userModel.getUserByFullName(
-      testUser.first_name,
-      testUser.last_name
-    )
+    const existingUser = await userModel.getUserByUsername(testUser.username)
     expect({
       first_name: existingUser.first_name,
       last_name: existingUser.last_name,
+      username: existingUser.username,
       password: existingUser.password,
     }).toEqual({ ...testUser })
   })
   it("show method should throw an error if the given full name doesn't exist", async () => {
-    const existingUser = await userModel.getUserByFullName('john', 'doe')
+    const existingUser = await userModel.getUserByUsername('john')
     expect(existingUser).toThrowError
   })
 })

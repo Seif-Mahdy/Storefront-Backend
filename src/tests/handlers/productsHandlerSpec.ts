@@ -5,14 +5,13 @@ const request = supertest(app)
 
 let token: string
 
-fdescribe('Testing products endpoint: /products', () => {
-  const dummyProduct: Product = { name: 'p2', price: 20 }
+describe('Testing products endpoint: /products', () => {
+  const dummyProduct: Product = { name: 'tomato', price: 20 }
   beforeAll(async () => {
     await request
       .post('/users/login')
       .send({
-        first_name: 'john',
-        last_name: 'doe',
+        username: 'johndoe',
         password: 'Strong@2892022',
       })
       .then((res) => {
@@ -27,7 +26,7 @@ fdescribe('Testing products endpoint: /products', () => {
       .expect(201)
   })
   it('Create endpoint should return 403 given an invalid token', async () => {
-    const p: Product = { name: 'p3', price: 20 }
+    const p: Product = { name: 'potato', price: 10 }
     await request
       .post('/products')
       .send(p)

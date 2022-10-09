@@ -19,8 +19,14 @@ const register = async (req: Request, res: Response) => {
     const {
       first_name,
       last_name,
+      username,
       password,
-    }: { first_name: string; last_name: string; password: string } = req.body
+    }: {
+      first_name: string
+      last_name: string
+      username: string
+      password: string
+    } = req.body
 
     // Hashing the password before adding it to DB
     const hash = bcrypt.hashSync(
@@ -30,6 +36,7 @@ const register = async (req: Request, res: Response) => {
     const user: User = {
       first_name: first_name,
       last_name: last_name,
+      username: username,
       password: hash,
     }
     const newUser = await users.create(user)
@@ -46,12 +53,9 @@ const login = async (req: Request, res: Response) => {
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() })
     }
-    const {
-      first_name,
-      last_name,
-      password,
-    }: { first_name: string; last_name: string; password: string } = req.body
-    const existingUser = await users.getUserByFullName(first_name, last_name)
+    const { username, password }: { username: string; password: string } =
+      req.body
+    const existingUser = await users.getUserByUsername(username)
     if (!existingUser) {
       return res.status(403).json('wrong credentials')
     }
@@ -82,39 +86,7 @@ const show = async (req: Request, res: Response) => {
     res.status(500).json(err)
   }
 }
-const create = async (req: Request, res: Response) => {
-  try {
-    if (Verify(req)) {
-      const errors = validationResult(req)
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() })
-      }
-      const {
-        first_name,
-        last_name,
-        password,
-      }: { first_name: string; last_name: string; password: string } = req.body
 
-      // Hashing the password before adding it to DB
-      const hash = bcrypt.hashSync(
-        password + BCRYPT_PASSWORD,
-        parseInt(SALT_ROUNDS as string)
-      )
-      const user: User = {
-        first_name: first_name,
-        last_name: last_name,
-        password: hash,
-      }
-      const newUser = await users.create(user)
-      const token = Sign(Number(newUser.id))
-      res.status(201).json({ user: newUser, token: token })
-    } else {
-      return res.status(403).json({ err: 'Token is invalid or expired' })
-    }
-  } catch (err) {
-    res.status(500).json({ err })
-  }
-}
 const index = async (req: Request, res: Response) => {
   try {
     if (Verify(req)) {
@@ -134,22 +106,15 @@ const userRoutes = (app: express.Application) => {
     '/users/register',
     body('first_name').isString(),
     body('last_name').isString(),
+    body('username').isString(),
     body('password').isStrongPassword(),
     register
   ),
     app.post(
       '/users/login',
-      body('first_name').isString(),
-      body('last_name').isString(),
+      body('username').isString(),
       body('password').isString(),
       login
-    ),
-    app.post(
-      '/users/',
-      body('first_name').isString(),
-      body('last_name').isString(),
-      body('password').isStrongPassword(),
-      create
     ),
     app.get('/users/:id', param('id').isNumeric(), show)
   app.get('/users/', index)

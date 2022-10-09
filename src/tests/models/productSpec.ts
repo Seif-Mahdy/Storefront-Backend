@@ -4,7 +4,7 @@ const testProduct: Product = { name: 'p1', price: 20 }
 const productModel = new ProductsModel()
 let product: Product
 
-fdescribe('Testing products Model', () => {
+describe('Testing products Model', () => {
   it('should have a create method', () => {
     expect(productModel.create).toBeDefined()
   })
