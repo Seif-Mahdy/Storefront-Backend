@@ -74,4 +74,7 @@ describe('Testing user endpoint: /users', () => {
       .set('Authorization', `Bearer invalid-token`)
       .expect(403)
   })
+  beforeAll(async () => {
+    await request.delete(`/users/${dummyUser.id}`)
+  })
 })

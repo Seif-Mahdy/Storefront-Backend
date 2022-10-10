@@ -93,7 +93,21 @@ const index = async (req: Request, res: Response) => {
       const allUsers = await users.index()
       res.status(200).json({ users: allUsers })
     } else {
-      return res.status(403).json({ err: 'Token is invalid or expired' })
+      res.status(403).json({ err: 'Token is invalid or expired' })
+    }
+  } catch (err) {
+    res.status(500).json({ err })
+  }
+}
+
+const deleteUser = async (req: Request, res: Response) => {
+  try {
+    if (Verify(req)) {
+      const userId = req.params.id
+      await users.delete(Number(userId))
+      res.status(200).json({ msg: 'User deleted successfully' })
+    } else {
+      res.status(403).json({ err: 'Token is invalid or expired' })
     }
   } catch (err) {
     res.status(500).json({ err })
@@ -117,7 +131,8 @@ const userRoutes = (app: express.Application) => {
       login
     ),
     app.get('/users/:id', param('id').isNumeric(), show)
-  app.get('/users/', index)
+  app.get('/users/', index),
+    app.delete('/users/:id', param('id').isNumeric(), deleteUser)
 }
 
 export default userRoutes

@@ -53,9 +53,22 @@ const create = async (req: Request, res: Response) => {
   }
 }
 
+const deleteOrder = async (req: Request, res: Response) => {
+  try {
+    if (Verify(req)) {
+      const id = req.params.id
+      await orders.delete(Number(id))
+    } else {
+      res.status(403).json({ err: 'Token is invalid or expired' })
+    }
+  } catch (err) {
+    res.status(500).json({ err })
+  }
+}
 //routes
 const ordersRoutes = (app: express.Application) => {
   app.get('/orders/:userId', param('userId').isNumeric(), getActiveOrderByUser)
+  app.delete('/orders/:id', param('id').isNumeric(), deleteOrder)
   app.post(
     '/orders/',
     param('products').isArray(),

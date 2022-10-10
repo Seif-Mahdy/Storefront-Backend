@@ -62,6 +62,18 @@ const index = async (req: Request, res: Response) => {
     res.status(500).json({ err })
   }
 }
+const deleteProduct = async (req: Request, res: Response) => {
+  try {
+    if (Verify(req)) {
+      const id = req.params.id
+      await products.delete(Number(id))
+    } else {
+      res.status(403).json({ err: 'Token is invalid or expired' })
+    }
+  } catch (err) {
+    res.status(500).json({ err })
+  }
+}
 
 //routes
 const productsRoutes = (app: express.Application) => {
@@ -73,6 +85,7 @@ const productsRoutes = (app: express.Application) => {
   ),
     app.get('/products/:id', param('id').isNumeric(), show)
   app.get('/products', index)
+  app.delete('/products/:id', deleteProduct)
 }
 
 export default productsRoutes

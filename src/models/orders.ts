@@ -50,4 +50,16 @@ export class OrderModel {
       )
     }
   }
+  async delete(id: number) {
+    try {
+      const connection = await client.connect()
+      const sql = 'DELETE FROM orders WHERE id=($1)'
+      await connection.query(sql, [id])
+      connection.release()
+    } catch (error) {
+      throw new Error(
+        `Failed to delete the order with the following error: ${error}`
+      )
+    }
+  }
 }

@@ -23,4 +23,7 @@ describe('Testing orders Model', () => {
       ...testOrder,
     })
   })
+  afterAll(async () => {
+    await orderModel.delete(Number(order.id))
+  })
 })

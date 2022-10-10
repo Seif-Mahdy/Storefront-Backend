@@ -1,6 +1,6 @@
 import { Product, ProductsModel } from '../../models/products'
 
-const testProduct: Product = { name: 'p1', price: 20 }
+const testProduct: Product = { name: 'tomato', price: 20 }
 const productModel = new ProductsModel()
 let product: Product
 
@@ -20,5 +20,8 @@ describe('Testing products Model', () => {
   it('create method should return a product if exists', async () => {
     const p = await productModel.show(Number(product.id))
     expect({ name: p.name, price: p.price }).toEqual({ ...testProduct })
+  })
+  afterAll(async () => {
+    await productModel.delete(Number(product.id))
   })
 })

@@ -67,4 +67,16 @@ export class UsersModel {
       )
     }
   }
+  async delete(id: number): Promise<void> {
+    try {
+      const connection = await client.connect()
+      const sql = 'DELETE FROM users WHERE id=($1)'
+      await connection.query(sql, [id])
+      connection.release()
+    } catch (error) {
+      throw new Error(
+        `Failed to delete the user with the following error: ${error}`
+      )
+    }
+  }
 }

@@ -3,10 +3,10 @@ import { User, UsersModel } from '../../models/users'
 const userModel = new UsersModel()
 
 const testUser: User = {
-  first_name: 'seif',
-  last_name: 'alaa',
-  username: 'sifo',
-  password: '123456',
+  first_name: 'john',
+  last_name: 'doe',
+  username: 'johndoe',
+  password: 'Strong@123456',
 }
 
 let user: User
@@ -61,5 +61,11 @@ describe('Testing users Model', () => {
   it("show method should throw an error if the given full name doesn't exist", async () => {
     const existingUser = await userModel.getUserByUsername('john')
     expect(existingUser).toThrowError
+  })
+  it('should have a delete method', () => {
+    expect(userModel.delete).toBeDefined()
+  })
+  afterAll(async () => {
+    await userModel.delete(Number(user.id))
   })
 })
