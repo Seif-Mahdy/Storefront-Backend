@@ -50,12 +50,12 @@ const login = async (req: Request, res: Response) => {
       req.body
     const existingUser = await users.authenticate(username, password)
     if (!existingUser) {
-      return res.status(403).json('wrong credentials')
+      return res.status(403).json({ err: 'wrong credentials' })
     }
     const token = Sign(Number(existingUser.id))
     res.json({ token })
   } catch (err) {
-    res.status(500).json(err)
+    res.status(500).json({ err })
   }
 }
 
