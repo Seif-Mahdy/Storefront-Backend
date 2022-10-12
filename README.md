@@ -9,8 +9,8 @@ To get API running locally:
 ### Initialize the Database
 
 - Create 2 Databases with the following names:
-    a) store
-    b) store_test
+  - store
+  - store_test
 
 ### Get the code and run it
 
@@ -29,6 +29,7 @@ To get API running locally:
 - `npm run dev` to run the ts modules using nodemon
 
 ## API endpoints and Database Schema
+
 - Check [REQUIREMENTS.md](https://github.com/seifalaa/Storefront-Backend/blob/master/REQUIREMENTS.md)
 
 ## Built with
