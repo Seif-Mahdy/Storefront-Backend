@@ -34,16 +34,15 @@ describe('Testing products endpoint: /products', () => {
       })
   })
   it('Create endpoint should return 403 given an invalid token', async () => {
-    const p: Product = { name: 'potato', price: 10 }
     await request
       .post('/products')
-      .send(p)
+      .send(dummyProduct)
       .set('Authorization', `Bearer invalid-token`)
       .expect(403)
   })
   it('Read endpoint should return 200 and the product with the given id given an valid token', async () => {
     await request
-      .get('/products/1')
+      .get(`/products/${dummyProduct.id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
   })
@@ -55,15 +54,19 @@ describe('Testing products endpoint: /products', () => {
   })
   it('Read endpoint should return 403 given an invalid token', async () => {
     await request
-      .get('/products/1')
+      .get(`/products/${dummyProduct.id}`)
       .set('Authorization', `Bearer invalid-token`)
       .expect(403)
   })
   afterAll(async () => {
     //delete the user
-    await request.delete(`/users/${user.id}`)
+    await request
+      .delete(`/users/${user.id}`)
+      .set('Authorization', `Bearer ${token}`)
 
     //delete the product
-    await request.delete(`/products/${dummyProduct.id}`)
+    await request
+      .delete(`/products/${dummyProduct.id}`)
+      .set('Authorization', `Bearer ${token}`)
   })
 })

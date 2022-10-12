@@ -5,7 +5,7 @@ import { User } from '../../models/users'
 const request = supertest(app)
 
 describe('Testing user endpoint: /users', () => {
-  const dummyUser: User = {
+  let dummyUser: User = {
     first_name: 'john',
     last_name: 'doe',
     username: 'johndoe',
@@ -20,6 +20,7 @@ describe('Testing user endpoint: /users', () => {
       .then((res) => {
         const data = JSON.parse(res.text)
         token = data.token
+        dummyUser = { ...dummyUser, id: data.user.id }
       })
   })
   it('Register endpoint should return 400 if any of the parameters are missing', async () => {
@@ -58,7 +59,7 @@ describe('Testing user endpoint: /users', () => {
   })
   it('Read endpoint should return 200 given a valid token and an existing user id', async () => {
     await request
-      .get('/users/1')
+      .get(`/users/${dummyUser.id}`)
       .set('Authorization', `Bearer ${token}`)
       .expect(200)
   })
@@ -70,11 +71,13 @@ describe('Testing user endpoint: /users', () => {
   })
   it('Read endpoint should return 403 given an invalid token', async () => {
     await request
-      .get('/users/10')
+      .get(`/users/${dummyUser.id}`)
       .set('Authorization', `Bearer invalid-token`)
       .expect(403)
   })
-  beforeAll(async () => {
-    await request.delete(`/users/${dummyUser.id}`)
+  afterAll(async () => {
+    await request
+      .delete(`/users/${dummyUser.id}`)
+      .set('Authorization', `Bearer ${token}`)
   })
 })

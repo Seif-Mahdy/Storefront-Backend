@@ -42,6 +42,8 @@ const create = async (req: Request, res: Response) => {
       return res.status(403).json({ err: 'Token is invalid or expired' })
     }
   } catch (err) {
+    console.log(err)
+
     res.status(500).json({ err })
   }
 }
@@ -67,6 +69,7 @@ const deleteProduct = async (req: Request, res: Response) => {
     if (Verify(req)) {
       const id = req.params.id
       await products.delete(Number(id))
+      res.status(200).json({ msg: 'Product deleted successfully' })
     } else {
       res.status(403).json({ err: 'Token is invalid or expired' })
     }

@@ -1,4 +1,9 @@
 import client from '../database'
+import bcrypt from 'bcrypt'
+import * as dotenv from 'dotenv'
+
+dotenv.config()
+const { SALT_ROUNDS, BCRYPT_PASSWORD } = process.env
 
 export type User = {
   id?: number
@@ -22,13 +27,19 @@ export class UsersModel {
       )
     }
   }
-  async getUserByUsername(username: string): Promise<User> {
+  async authenticate(username: string, password: string): Promise<User | null> {
     try {
       const connection = await client.connect()
       const sql = 'SELECT * FROM users WHERE username=($1)'
       const result = await connection.query(sql, [username])
       connection.release()
-      return result.rows[0]
+      const user = result.rows[0]
+      if (user) {
+        if (bcrypt.compareSync(password + BCRYPT_PASSWORD, user.password)) {
+          return user
+        }
+      }
+      return null
     } catch (error) {
       throw new Error(
         `Failed to get the user with the following error: ${error}`
@@ -50,6 +61,11 @@ export class UsersModel {
   }
   async create(user: User): Promise<User> {
     try {
+      // Hashing the password before adding it to DB
+      const hash = bcrypt.hashSync(
+        user.password + BCRYPT_PASSWORD,
+        parseInt(SALT_ROUNDS as string)
+      )
       const connection = await client.connect()
       const sql =
         'INSERT INTO users (first_name, last_name, username, password) VALUES($1,$2,$3,$4) RETURNING *'
@@ -57,7 +73,7 @@ export class UsersModel {
         user.first_name,
         user.last_name,
         user.username,
-        user.password,
+        hash,
       ])
       connection.release()
       return result.rows[0]

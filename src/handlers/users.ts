@@ -1,12 +1,10 @@
 import { User, UsersModel } from '../models/users'
 import express, { Request, Response } from 'express'
 import { body, param, validationResult } from 'express-validator'
-import bcrypt from 'bcrypt'
 import * as dotenv from 'dotenv'
 import { Sign, Verify } from '../helpers/jwt-helper'
 
 dotenv.config()
-const { SALT_ROUNDS, BCRYPT_PASSWORD } = process.env
 
 const users = new UsersModel()
 
@@ -28,22 +26,17 @@ const register = async (req: Request, res: Response) => {
       password: string
     } = req.body
 
-    // Hashing the password before adding it to DB
-    const hash = bcrypt.hashSync(
-      password + BCRYPT_PASSWORD,
-      parseInt(SALT_ROUNDS as string)
-    )
     const user: User = {
       first_name: first_name,
       last_name: last_name,
       username: username,
-      password: hash,
+      password: password,
     }
     const newUser = await users.create(user)
     const token = Sign(Number(newUser.id))
     res.status(201).json({ user: newUser, token: token })
   } catch (err) {
-    res.status(500).json(err)
+    res.status(500).json({ err })
   }
 }
 
@@ -55,13 +48,8 @@ const login = async (req: Request, res: Response) => {
     }
     const { username, password }: { username: string; password: string } =
       req.body
-    const existingUser = await users.getUserByUsername(username)
+    const existingUser = await users.authenticate(username, password)
     if (!existingUser) {
-      return res.status(403).json('wrong credentials')
-    }
-    if (
-      !bcrypt.compareSync(password + BCRYPT_PASSWORD, existingUser.password)
-    ) {
       return res.status(403).json('wrong credentials')
     }
     const token = Sign(Number(existingUser.id))

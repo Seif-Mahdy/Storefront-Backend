@@ -2,7 +2,7 @@ import { User, UsersModel } from '../../models/users'
 
 const userModel = new UsersModel()
 
-const testUser: User = {
+const dummyUser: User = {
   first_name: 'john',
   last_name: 'doe',
   username: 'johndoe',
@@ -15,13 +15,16 @@ describe('Testing users Model', () => {
     expect(userModel.create).toBeDefined()
   })
   it('create method should return the user object once created', async () => {
-    user = await userModel.create(testUser)
+    user = await userModel.create(dummyUser)
     expect({
       first_name: user.first_name,
       last_name: user.last_name,
       username: user.username,
-      password: user.password,
-    }).toEqual({ ...testUser })
+    }).toEqual({
+      first_name: dummyUser.first_name,
+      last_name: dummyUser.last_name,
+      username: dummyUser.username,
+    })
   })
   it('should have an index method', () => {
     expect(userModel.index).toBeDefined()
@@ -35,31 +38,27 @@ describe('Testing users Model', () => {
   })
   it('show method should return a user if the given id exist', async () => {
     const existingUser = await userModel.show(Number(user.id))
-    expect({
-      first_name: existingUser.first_name,
-      last_name: existingUser.last_name,
-      username: existingUser.username,
-      password: existingUser.password,
-    }).toEqual({ ...testUser })
+    expect(existingUser).toEqual(user)
   })
   it("show method should throw an error if the given id doesn't exist", async () => {
     const existingUser = await userModel.show(5)
     expect(existingUser).toThrowError
   })
-  it('should have a getUserByFullName method', () => {
-    expect(userModel.getUserByUsername).toBeDefined()
+  it('should have a authenticate method', () => {
+    expect(userModel.authenticate).toBeDefined()
   })
-  it('show method should return a user if the given full name exists', async () => {
-    const existingUser = await userModel.getUserByUsername(testUser.username)
-    expect({
-      first_name: existingUser.first_name,
-      last_name: existingUser.last_name,
-      username: existingUser.username,
-      password: existingUser.password,
-    }).toEqual({ ...testUser })
+  it('authenticate method should return a user if the given username and password are valid', async () => {
+    const existingUser = (await userModel.authenticate(
+      dummyUser.username,
+      dummyUser.password
+    )) as User
+    expect(existingUser).toEqual(user)
   })
-  it("show method should throw an error if the given full name doesn't exist", async () => {
-    const existingUser = await userModel.getUserByUsername('john')
+  it("authenticate method should throw an error if the given username doesn't exist", async () => {
+    const existingUser = await userModel.authenticate(
+      dummyUser.username,
+      dummyUser.password
+    )
     expect(existingUser).toThrowError
   })
   it('should have a delete method', () => {
