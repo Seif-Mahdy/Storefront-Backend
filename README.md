@@ -19,6 +19,9 @@ To get API running locally:
 - `npx db-migrate up` to migrate all the tables to your database
 - `npm run start` to run the compiled code
 
+### Set your environment variables
+- Check [ENVEXAMPLE](https://github.com/seifalaa/Storefront-Backend/blob/master/ENVEXAMPLE)
+
 ## List of available commands
 
 - `npm run build` to transpile the ts code into js
